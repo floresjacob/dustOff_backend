@@ -2,13 +2,11 @@ from flask import Flask, request, jsonify
 from models import db, User
 import bcrypt
 from app import app
-from flask_cors import CORS
+
 
 # Make sure the app instance has been created in your app.py and extensions initialized.
 # If you haven't already imported the app from app.py here, you can either import it or create
 # a blueprint for these routes.
-
-CORS(app)
 
 @app.route('/register', methods=['POST'])
 def register():
