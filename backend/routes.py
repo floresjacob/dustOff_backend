@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from models import db, User
 import bcrypt
 from app import app
@@ -50,9 +51,16 @@ def login():
     # Check password
     if user and bcrypt.checkpw(password.encode('utf-8'), user.password_hash.encode('utf-8')):
         print("Password check passed.")
-        return jsonify({'message': 'Login successful'}), 200
+        # Create JWT access token
+        access_token = create_access_token(identity=username)
+        return jsonify({'message': 'Login successful', 'access_token': access_token}), 200
     else:
         print("Invalid credentials provided.")
         return jsonify({'error': 'Invalid credentials'}), 401
 
 # Optional: You might add more endpoints here for user management or protected content.
+@app.route('/protected_hello', methods=['GET'])
+@jwt_required()
+def protected_hello():
+    current_user = get_jwt_identity()
+    return jsonify({'message': f'Hello, {current_user}!'}), 200
